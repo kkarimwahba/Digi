@@ -1,4 +1,6 @@
 import 'package:digi2/login.dart';
+import 'package:digi2/services/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Signup extends StatefulWidget {
@@ -8,11 +10,11 @@ class Signup extends StatefulWidget {
   _SignupState createState() => _SignupState();
 }
 
-final _formKey = GlobalKey<FormState>();
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 TextEditingController usernamecontroller = TextEditingController();
 TextEditingController phonenumbercontroller = TextEditingController();
+final _auth = AuthService();
 
 class _SignupState extends State<Signup> {
   @override
@@ -20,13 +22,6 @@ class _SignupState extends State<Signup> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 22, 13, 53),
-        // appBar: AppBar(
-        //   title: const Text(
-        //     "EVENA",
-        //     style: TextStyle(color: Colors.white),
-        //   ),
-        //   backgroundColor: Colors.black,
-        // ),
         body: Container(
           width: double.infinity,
           height: double.infinity,
@@ -58,7 +53,6 @@ class _SignupState extends State<Signup> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Form(
-                    key: _formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -180,19 +174,17 @@ class _SignupState extends State<Signup> {
                           height: 0.13 * MediaQuery.of(context).size.width,
                           child: ElevatedButton(
                             onPressed: () async {
-                              // if (_formKey.currentState!.validate()) {
-                              //   User? user1 =
-                              //       await registerWithEmailAndPassword(
-                              //           emailController.text.trim(),
-                              //           passwordController.text.trim(),
-                              //           usernamecontroller.text.trim(),
-                              //           phonenumbercontroller.text.trim());
-                              //   Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (c) {
-                              //       return LoginPage();
-                              //     },
-                              //   ));
-                              // }
+                              final user =
+                                  await _auth.registerWithEmailAndPassword(
+                                      emailController.text,
+                                      passwordController.text,
+                                      usernamecontroller.text,
+                                      phonenumbercontroller.text);
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (c) {
+                                  return Login();
+                                },
+                              ));
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.amberAccent[700],

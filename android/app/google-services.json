@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "462115073196",
+    "project_id": "digihuman-dce99",
+    "storage_bucket": "digihuman-dce99.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:462115073196:android:2c9e5033e6690bd4df0309",
+        "android_client_info": {
+          "package_name": "com.example.digi2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfVQqBz9Y3_dvDocVoeQwWhdZIG909Kqs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -43,6 +43,10 @@ dependencies:
   model_viewer_plus: ^1.7.0
   #speech_to_text: ^6.6.1
   flutter_speech: ^2.0.0
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.17.7
+  cloud_firestore: ^4.13.6
+  uuid: ^4.3.3
   #flutter_tts: ^3.8.5
   #speech_to_text: ^6.6.1
   #o3d: ^3.1.0
