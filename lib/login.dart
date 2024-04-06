@@ -1,4 +1,5 @@
 import 'package:digi2/home.dart';
+import 'package:digi2/services/firebase_auth.dart';
 import 'package:digi2/signup.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,13 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _auth = AuthService();
+  @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,46 +138,17 @@ class _LoginState extends State<Login> {
                           height: 0.13 * MediaQuery.of(context).size.width,
                           child: ElevatedButton(
                             onPressed: () async {
-                              //   User? user = await signinwithemailandpassword(
-                              //       emailController.text.trim(),
-                              //       passwordController.text.trim());
-
-                              //   QuerySnapshot<Map<String, dynamic>>
-                              //       querySnapshot = await FirebaseFirestore
-                              //           .instance
-                              //           .collection('users')
-                              //           .where('uid', isEqualTo: user!.uid)
-                              //           .limit(1)
-                              //           .get();
-
-                              //   if (querySnapshot.docs.isNotEmpty) {
-                              //     String role =
-                              //         querySnapshot.docs.first.get('role') ??
-                              //             ''; // Get user role
-
-                              //     if (role == 'user') {
-                              //       Navigator.of(context).push(MaterialPageRoute(
-                              //         builder: (context) => UserHome(),
-                              //       ));
-                              //     } else if (role == 'admin') {
-                              //       Navigator.of(context).push(MaterialPageRoute(
-                              //         builder: (context) => Admin(),
-                              //       ));
-                              //     } else {
-                              //       ScaffoldMessenger.of(context).showSnackBar(
-                              //         SnackBar(
-                              //           content: Text('Wrong email or password'),
-                              //           duration: Duration(
-                              //               seconds:
-                              //                   3), // Adjust the duration as needed
-                              //         ),
-                              //       );
-                              //     }
-                              //   }
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (c) {
-                                return const Home();
-                              }));
+                              final user =
+                                  await _auth.signinwithemailandpassword(
+                                      emailController.text,
+                                      passwordController.text);
+                              if (user != null) {
+                                print("user logged In");
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(builder: (c) {
+                                  return const Home();
+                                }));
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
