@@ -1,4 +1,5 @@
-import 'package:digi2/congrats.dart';
+import 'package:digi2/screens/audiorecord.dart';
+import 'package:digi2/screens/congrats.dart';
 import 'package:flutter/material.dart';
 
 class RecordVoicePage extends StatefulWidget {
@@ -35,7 +36,13 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (c) {
+                        return audioRecord();
+                      },
+                    ));
+                  },
                   icon: const Icon(Icons.mic), // Add mic icon
                   label: const Text('Record'),
                   style: ElevatedButton.styleFrom(

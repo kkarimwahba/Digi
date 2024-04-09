@@ -1,7 +1,7 @@
-import 'package:digi2/avatar.dart';
-import 'package:digi2/speech.dart';
-import 'package:digi2/test.dart';
-import 'package:digi2/voice.dart';
+import 'package:digi2/screens/avatar.dart';
+import 'package:digi2/screens/speech.dart';
+import 'package:digi2/screens/test.dart';
+import 'package:digi2/screens/voice.dart';
 import 'package:flutter/material.dart';
 
 class CongratulationsPage extends StatelessWidget {

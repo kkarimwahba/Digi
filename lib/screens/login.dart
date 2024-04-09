@@ -1,6 +1,6 @@
-import 'package:digi2/home.dart';
+import 'package:digi2/screens/home.dart';
 import 'package:digi2/services/firebase_auth.dart';
-import 'package:digi2/signup.dart';
+import 'package:digi2/screens/signup.dart';
 import 'package:flutter/material.dart';
 
 TextEditingController emailController = TextEditingController();

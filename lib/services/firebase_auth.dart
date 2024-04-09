@@ -35,6 +35,7 @@ class AuthService {
     String password,
     String username,
     String phone,
+    String gender,
   ) async {
     try {
       UserCredential result =
@@ -52,6 +53,7 @@ class AuthService {
         'email': email,
         'password': password,
         'phone': phone,
+        'gender': gender,
         'role': 'user',
       });
 
@@ -59,6 +61,36 @@ class AuthService {
     } catch (error) {
       print('Error registering user: $error');
       return null;
+    }
+  }
+
+  Future<void> updateUserGender(String gender) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String uid = user.uid;
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'gender': gender,
+        });
+      }
+    } catch (error) {
+      print('Error updating user gender: $error');
+      throw Exception('An error occurred while updating user gender');
+    }
+  }
+
+  Future<void> updateUserImages(List<String> imageUrls) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String uid = user.uid;
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'images': imageUrls,
+        });
+      }
+    } catch (error) {
+      print('Error updating user images: $error');
+      throw Exception('An error occurred while updating user images');
     }
   }
 }
