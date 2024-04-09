@@ -1,4 +1,6 @@
-import 'package:digi2/gender.dart';
+import 'package:digi2/screens/audiorecord.dart';
+import 'package:digi2/screens/avatar.dart';
+import 'package:digi2/screens/gender.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -51,7 +53,7 @@ class _HomeState extends State<Home> {
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (c) {
-                    return Gender();
+                    return const Gender();
                   },
                 ));
               },
@@ -72,7 +74,11 @@ class _HomeState extends State<Home> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    // Navigate to Explore screen
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (c) {
+                        return audioRecord();
+                      },
+                    ));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amberAccent[700],
@@ -81,7 +87,11 @@ class _HomeState extends State<Home> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Navigate to My Avatars screen
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (c) {
+                        return Avatar();
+                      },
+                    ));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amberAccent[700],

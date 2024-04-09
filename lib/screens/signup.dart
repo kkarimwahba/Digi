@@ -1,4 +1,5 @@
-import 'package:digi2/login.dart';
+import 'package:digi2/screens/gender.dart';
+import 'package:digi2/screens/login.dart';
 import 'package:digi2/services/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -179,10 +180,11 @@ class _SignupState extends State<Signup> {
                                       emailController.text,
                                       passwordController.text,
                                       usernamecontroller.text,
-                                      phonenumbercontroller.text);
+                                      phonenumbercontroller.text,
+                                      '');
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (c) {
-                                  return Login();
+                                  return const Gender();
                                 },
                               ));
                             },

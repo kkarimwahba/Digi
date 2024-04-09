@@ -1,4 +1,4 @@
-import 'package:digi2/signup.dart';
+import 'package:digi2/screens/signup.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';

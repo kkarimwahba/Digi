@@ -1,8 +1,10 @@
 import 'dart:io';
-
-import 'package:digi2/recordVoice.dart';
+import 'package:digi2/screens/recordVoice.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class uploadImage extends StatefulWidget {
   const uploadImage({Key? key}) : super(key: key);
@@ -12,8 +14,52 @@ class uploadImage extends StatefulWidget {
 }
 
 class _uploadImageState extends State<uploadImage> {
-  List<String> uploadedImages = []; // List to store uploaded image paths
+  List<String> uploadedImages = [];
   final ImagePicker _picker = ImagePicker();
+
+  Future<void> _uploadImagesToFirestore() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String uid = user.uid;
+
+      for (String imagePath in uploadedImages) {
+        File imageFile = File(imagePath);
+        String imageName = DateTime.now().millisecondsSinceEpoch.toString();
+        Reference storageReference = FirebaseStorage.instance
+            .ref()
+            .child('user_images')
+            .child(uid)
+            .child('$imageName.jpg');
+
+        UploadTask uploadTask = storageReference.putFile(imageFile);
+        TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
+
+        String imageURL = await taskSnapshot.ref.getDownloadURL();
+
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'images': FieldValue.arrayUnion([imageURL]),
+        });
+      }
+    }
+  }
+
+  Future<void> _takePhoto() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        uploadedImages.add(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> _chooseFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        uploadedImages.add(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,14 +153,14 @@ class _uploadImageState extends State<uploadImage> {
               margin: const EdgeInsets.symmetric(horizontal: 20.0),
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(
-                      'assets/images/btnbk.png'), // Background image for the "Next" button
+                  image: AssetImage('assets/images/btnbk.png'),
                   fit: BoxFit.cover,
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),
               ),
               child: ElevatedButton(
                 onPressed: () {
+                  _uploadImagesToFirestore();
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (c) {
                       return RecordVoicePage();
@@ -130,9 +176,8 @@ class _uploadImageState extends State<uploadImage> {
                   backgroundColor: Colors.transparent,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
-                  ), // Set primary color to transparent
-                  shadowColor:
-                      Colors.transparent, // Set shadow color to transparent
+                  ),
+                  shadowColor: Colors.transparent,
                 ),
               ),
             ),
@@ -140,23 +185,5 @@ class _uploadImageState extends State<uploadImage> {
         ),
       ),
     );
-  }
-
-  Future<void> _takePhoto() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
-      setState(() {
-        uploadedImages.add(pickedFile.path);
-      });
-    }
-  }
-
-  Future<void> _chooseFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        uploadedImages.add(pickedFile.path);
-      });
-    }
   }
 }

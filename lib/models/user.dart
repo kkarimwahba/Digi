@@ -1,4 +1,4 @@
-import 'package:digi2/signup.dart';
+import 'package:digi2/screens/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 User? user = FirebaseAuth.instance.currentUser;
