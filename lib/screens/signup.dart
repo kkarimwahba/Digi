@@ -16,6 +16,8 @@ TextEditingController phonenumbercontroller = TextEditingController();
 final _auth = AuthService();
 
 class _SignupState extends State<Signup> {
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -26,7 +28,6 @@ class _SignupState extends State<Signup> {
           height: double.infinity,
           color: Color.fromARGB(0, 22, 13, 53),
           child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
             child: Column(
               children: [
                 const Padding(
@@ -52,6 +53,7 @@ class _SignupState extends State<Signup> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Form(
+                    key: _formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -70,7 +72,6 @@ class _SignupState extends State<Signup> {
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.black),
                               ),
-                              focusColor: Colors.black,
                               hintStyle: TextStyle(color: Colors.black),
                             ),
                             validator: (value) {
@@ -173,18 +174,20 @@ class _SignupState extends State<Signup> {
                           height: 0.13 * MediaQuery.of(context).size.width,
                           child: ElevatedButton(
                             onPressed: () async {
-                              final user =
-                                  await _auth.registerWithEmailAndPassword(
-                                      emailController.text,
-                                      passwordController.text,
-                                      usernamecontroller.text,
-                                      phonenumbercontroller.text,
-                                      '');
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (c) {
-                                  return Login();
-                                },
-                              ));
+                              if (_formKey.currentState!.validate()) {
+                                final user =
+                                    await _auth.registerWithEmailAndPassword(
+                                        emailController.text,
+                                        passwordController.text,
+                                        usernamecontroller.text,
+                                        phonenumbercontroller.text,
+                                        '');
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (c) {
+                                    return Login();
+                                  },
+                                ));
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.amberAccent[700],
