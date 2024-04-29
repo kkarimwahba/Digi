@@ -1,15 +1,64 @@
+import 'dart:io';
+
 import 'package:digi2/screens/audiorecord.dart';
 import 'package:digi2/screens/congrats.dart';
+import 'package:digi2/services/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 
 class RecordVoicePage extends StatefulWidget {
-  const RecordVoicePage({Key? key}) : super(key: key);
+  late String selectedGender;
+  late List<String> uploadedImages;
+
+  RecordVoicePage({
+    super.key,
+    required this.selectedGender,
+    required this.uploadedImages,
+  });
 
   @override
   State<RecordVoicePage> createState() => _RecordVoicePageState();
 }
 
 class _RecordVoicePageState extends State<RecordVoicePage> {
+  String? _filePath;
+  final _auth = AuthService();
+
+  Future<void> _pickFile() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.audio,
+        allowCompression: true,
+      );
+
+      if (result != null) {
+        File file = File(result.files.single.path!);
+
+        // Upload file to Firebase storage
+        TaskSnapshot taskSnapshot = await FirebaseStorage.instance
+            .ref()
+            .child('uploads/${DateTime.now().millisecondsSinceEpoch}')
+            .putFile(file);
+
+        // Get download URL of the uploaded file
+        String downloadURL = await taskSnapshot.ref.getDownloadURL();
+
+        // Update user gender and images
+        await _auth.updateUserGenderAndImages(
+            widget.selectedGender, widget.uploadedImages, file);
+
+        setState(() {
+          _filePath = result.files.single.path!;
+        });
+      } else {
+        // User canceled the picker
+      }
+    } catch (e) {
+      print('Error picking file: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +88,7 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (c) {
-                        return audioRecord();
+                        return const AudioRecord();
                       },
                     ));
                   },
@@ -53,7 +102,9 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    _pickFile();
+                  },
                   icon: const Icon(Icons.upload_file), // Add upload file icon
                   label: const Text('Upload File'),
                   style: ElevatedButton.styleFrom(
@@ -73,47 +124,29 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
             ),
-            const SizedBox(height: 10.0),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  '• Quiet environment.',
-                  style: TextStyle(fontSize: 14.0, color: Colors.white),
-                ),
-              ],
-            ),
-            const SizedBox(height: 5.0),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  '• Slow down and speak deliberately.',
-                  style: TextStyle(fontSize: 14.0, color: Colors.white),
-                ),
-              ],
-            ),
-            const SizedBox(height: 5.0),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  '• Invest in high-quality equipment (optional).',
-                  style: TextStyle(fontSize: 14.0, color: Colors.white),
-                ),
-              ],
-            ),
-            const SizedBox(height: 5.0),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  '• No other voices in the file.',
-                  style: TextStyle(fontSize: 14.0, color: Colors.white),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20.0),
+            // Rest of the code remains the same
+            if (_filePath != null)
+              Column(
+                children: [
+                  const SizedBox(height: 20.0),
+                  const Text(
+                    'Uploaded File:',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  Text(
+                    _filePath!,
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             Expanded(child: Container()),
             GestureDetector(
               onTap: () {
