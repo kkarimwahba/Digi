@@ -1,7 +1,6 @@
 import 'package:digi2/screens/uploadImage.dart';
 import 'package:flutter/material.dart';
 import 'package:digi2/services/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class Gender extends StatefulWidget {
   const Gender({Key? key}) : super(key: key);
@@ -98,10 +97,9 @@ class _GenderState extends State<Gender> {
           GestureDetector(
             onTap: () async {
               if (selectedGender != null) {
-                await _auth.updateUserGender(selectedGender!);
-                Navigator.of(context).push(MaterialPageRoute(
+                await Navigator.of(context).push(MaterialPageRoute(
                   builder: (c) {
-                    return const uploadImage();
+                    return uploadImage(selectedGender: selectedGender!);
                   },
                 ));
               }

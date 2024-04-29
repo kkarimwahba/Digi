@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class audioRecord extends StatefulWidget {
-  audioRecord({Key? key}) : super(key: key);
+class AudioRecord extends StatefulWidget {
+  const AudioRecord({Key? key}) : super(key: key);
 
   @override
-  _audioRecordState createState() => _audioRecordState();
+  _AudioRecordState createState() => _AudioRecordState();
 }
 
-class _audioRecordState extends State<audioRecord> {
+class _AudioRecordState extends State<AudioRecord> {
   final recorder = FlutterSoundRecorder();
   bool isRecorderReady = false;
 
@@ -60,8 +60,9 @@ class _audioRecordState extends State<audioRecord> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.only(top: 50.0), // Padding for top space
-              child: Text(
+              padding:
+                  const EdgeInsets.only(top: 50.0), // Padding for top space
+              child: const Text(
                 ' Do you try to find a compromise and maintain peace,\n or do you stand firm on your beliefs and principles?',
                 style: TextStyle(
                   fontSize: 15,
@@ -83,7 +84,7 @@ class _audioRecordState extends State<audioRecord> {
                 return Text(
                   '$twoDigitMinutes:$twoDigitSeconds',
                   style: const TextStyle(
-                    fontSize: 80,
+                    fontSize: 60,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -93,7 +94,7 @@ class _audioRecordState extends State<audioRecord> {
             ElevatedButton(
               child: Icon(
                 recorder.isRecording ? Icons.stop : Icons.mic,
-                size: 80,
+                size: 60,
               ),
               onPressed: () async {
                 if (recorder.isRecording) {

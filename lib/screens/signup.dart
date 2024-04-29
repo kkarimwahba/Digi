@@ -1,7 +1,5 @@
-import 'package:digi2/screens/gender.dart';
 import 'package:digi2/screens/login.dart';
 import 'package:digi2/services/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Signup extends StatefulWidget {
