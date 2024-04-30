@@ -3,9 +3,11 @@ import 'dart:math';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   Future<User?> signinwithemailandpassword(
       String email, String password) async {
@@ -63,6 +65,34 @@ class AuthService {
       return user;
     } catch (error) {
       print('Error registering user: $error');
+      return null;
+    }
+  }
+
+  Future<User?> registerWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+        UserCredential result = await _auth.signInWithCredential(credential);
+        User? user = result.user;
+
+        // Check if the user is new and save additional information if needed
+        if (result.additionalUserInfo?.isNewUser == true) {
+          // Save additional user information to Firestore
+          // Example: FirebaseFirestore.instance.collection('users').doc(user.uid).set({ ... });
+        }
+
+        return user;
+      }
+    } catch (error) {
+      print('Error registering with Google: $error');
       return null;
     }
   }

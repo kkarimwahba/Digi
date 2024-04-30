@@ -46,7 +46,8 @@ dependencies:
   uuid: ^4.3.3
   firebase_storage: ^11.7.1
   flutter_sound: ^9.4.6
-  file_picker: ^4.0.0
+  file_picker: ^8.0.3
+  google_sign_in: ^6.2.1
   #speech_to_text: ^6.6.1
   #flutter_tts: ^3.8.5
   #o3d: ^3.1.0

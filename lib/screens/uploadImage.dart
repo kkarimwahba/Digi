@@ -43,10 +43,10 @@ class _uploadImageState extends State<uploadImage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 24, 30, 62),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 24, 30, 62),
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         title: const Text('Choose Photo'),
       ),
       body: Padding(
@@ -59,13 +59,13 @@ class _uploadImageState extends State<uploadImage> {
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 20.0),
             const Text(
               'Upload 2-6 photos of yourself',
-              style: TextStyle(fontSize: 16.0, color: Colors.white),
+              style: TextStyle(fontSize: 16.0, color: Colors.black),
             ),
             const SizedBox(height: 20.0),
             Row(
@@ -73,37 +73,49 @@ class _uploadImageState extends State<uploadImage> {
               children: [
                 ElevatedButton.icon(
                   onPressed: _takePhoto,
-                  icon: const Icon(Icons.camera_alt),
+                  icon: const Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                  ),
                   label: const Text(
                     'Take Photo',
+                    style: TextStyle(color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150.0, 50.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
+                    backgroundColor: Colors.black,
                   ),
                 ),
                 ElevatedButton.icon(
                   onPressed: _chooseFromGallery,
-                  icon: const Icon(Icons.photo_library),
-                  label: const Text('Choose from Gallery'),
+                  icon: const Icon(
+                    Icons.photo_library,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    'Choose from Gallery',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150.0, 50.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
+                    backgroundColor: Colors.black,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 60.0),
+            const SizedBox(height: 20.0),
             const Text(
-              'The better your Images \nthe better your results.',
-              style: TextStyle(fontSize: 16.0, color: Colors.white),
+              'The better your Images \nThe better your results.',
+              style: TextStyle(fontSize: 16.0, color: Colors.black),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 40.0),
             if (uploadedImages.isNotEmpty)
               Expanded(
                 child: GridView.builder(
@@ -121,13 +133,13 @@ class _uploadImageState extends State<uploadImage> {
                   },
                 ),
               ),
-            const SizedBox(height: 60.0),
+            const Spacer(),
             const Text(
               'Thanks for letting us help you!',
-              style: TextStyle(fontSize: 16.0, color: Colors.white),
+              style: TextStyle(fontSize: 16.0, color: Colors.black),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 60.0),
+            const SizedBox(height: 20.0),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20.0),
               decoration: const BoxDecoration(

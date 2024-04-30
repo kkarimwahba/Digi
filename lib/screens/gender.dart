@@ -16,12 +16,11 @@ class _GenderState extends State<Gender> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color.fromARGB(255, 24, 30, 62), // Set background color
+      backgroundColor: Colors.white, // Set background color
 
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 24, 30, 62),
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         title: const Text('Your Gender'),
       ),
       body: Column(
@@ -35,7 +34,7 @@ class _GenderState extends State<Gender> {
                   style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: Colors.black),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -90,7 +89,7 @@ class _GenderState extends State<Gender> {
           if (selectedGender != null)
             Text(
               'Chosen Gender: $selectedGender',
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.black, fontSize: 17),
             ),
           Expanded(
               child: Container()), // Spacer to push Ok button to the bottom

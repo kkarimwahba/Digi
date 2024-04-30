@@ -68,7 +68,7 @@ class _UserProfileState extends State<UserProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('User Profile'),
+          title: const Text('My Profile'),
           actions: <Widget>[
             IconButton(
               icon: const Icon(
@@ -160,7 +160,7 @@ class _UserProfileState extends State<UserProfile> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 19, 6, 133),
+                      backgroundColor: Colors.black,
                     ),
                     child: const Text(
                       'Update',
