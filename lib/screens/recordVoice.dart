@@ -62,10 +62,10 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 24, 30, 62),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 24, 30, 62),
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         title: const Text('Record Voice'),
       ),
       body: Padding(
@@ -75,7 +75,7 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
             const SizedBox(height: 20.0),
             const Text(
               'Record voice to make your Avatar \nhas the same voice',
-              style: TextStyle(fontSize: 16.0, color: Colors.white),
+              style: TextStyle(fontSize: 16.0, color: Colors.black),
               textAlign: TextAlign.center,
             ),
             const SizedBox(
@@ -92,26 +92,40 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
                       },
                     ));
                   },
-                  icon: const Icon(Icons.mic), // Add mic icon
-                  label: const Text('Record'),
+                  icon: const Icon(
+                    Icons.mic,
+                    color: Colors.white,
+                  ), // Add mic icon
+                  label: const Text(
+                    'Record',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150.0, 50.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
+                    backgroundColor: Colors.black,
                   ),
                 ),
                 ElevatedButton.icon(
                   onPressed: () {
                     _pickFile();
                   },
-                  icon: const Icon(Icons.upload_file), // Add upload file icon
-                  label: const Text('Upload File'),
+                  icon: const Icon(
+                    Icons.upload_file,
+                    color: Colors.white,
+                  ), // Add upload file icon
+                  label: const Text(
+                    'Upload File',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150.0, 50.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
+                    backgroundColor: Colors.black,
                   ),
                 ),
               ],
@@ -122,67 +136,75 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
               style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                  color: Colors.black),
             ),
             // Rest of the code remains the same
             if (_filePath != null)
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20.0),
                   const Text(
-                    'Uploaded File:',
+                    'Uploaded Audio File:',
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 10.0),
-                  Text(
-                    _filePath!,
-                    style: const TextStyle(
-                      fontSize: 14.0,
-                      color: Colors.white,
-                    ),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.audiotrack, // Audio icon
+                        color: Colors.black,
+                      ),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: Text(
+                          _filePath!,
+                          style: const TextStyle(
+                            fontSize: 14.0,
+                            color: Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            Expanded(child: Container()),
-            GestureDetector(
-              onTap: () {
-                // Navigator.of(context).push(MaterialPageRoute(
-                //   builder: (c) {
-                //     return const uploadImage();
-                //   },
-                // ));
-              },
-              child: Container(
-                margin: const EdgeInsets.all(20.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  image: const DecorationImage(
-                    image: AssetImage('assets/images/btnbk.png'),
-                    fit: BoxFit.cover,
-                  ),
+            const Spacer(),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20.0),
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/btnbk.png'),
+                  fit: BoxFit.cover,
                 ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (c) {
-                        return CongratulationsPage();
-                      },
-                    ));
-                  },
-                  child: const Text(
-                    'Next',
-                    style: TextStyle(color: Colors.white, fontSize: 25),
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              ),
+              child: ElevatedButton(
+                onPressed: () {
+                  //  _auth.updateUserGenderAndImages(
+                  //     widget.selectedGender, uploadedImages);
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (c) {
+                      return const CongratulationsPage();
+                    },
+                  ));
+                },
+                child: const Text(
+                  'Next',
+                  style: TextStyle(color: Colors.white, fontSize: 25),
+                ),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50.0),
+                  backgroundColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ), // Set shadow color to transparent
-                  ),
+                  shadowColor: Colors.transparent,
                 ),
               ),
             ),

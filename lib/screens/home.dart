@@ -23,12 +23,6 @@ class _HomeState extends State<Home> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/images/homebk.jpg'),
-              ),
-            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.max,
@@ -38,21 +32,21 @@ class _HomeState extends State<Home> {
                   child: const Column(
                     children: [
                       SizedBox(
-                        height: 100.0,
+                        height: 0.0,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 250.0),
+                        padding: EdgeInsets.only(top: 0.0),
                         child: Text(
                           'Digital Twin Of Human',
                           style: TextStyle(
                               fontSize: 30.0,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                              color: Colors.black),
                         ),
                       ),
                       Text(
                         'Create your own AI-generated avatar',
-                        style: TextStyle(fontSize: 16.0, color: Colors.white),
+                        style: TextStyle(fontSize: 16.0, color: Colors.black),
                       ),
                     ],
                   ),
@@ -66,15 +60,14 @@ class _HomeState extends State<Home> {
                     ));
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amberAccent[700],
+                    backgroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                   ),
                   child: const Text(
                     'Create your Own Avatar',
-                    style: TextStyle(
-                        fontSize: 24, color: Color.fromARGB(255, 52, 38, 170)),
+                    style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
                 ),
                 Row(
@@ -89,9 +82,12 @@ class _HomeState extends State<Home> {
                         ));
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amberAccent[700],
+                        backgroundColor: Colors.black,
                       ),
-                      child: const Text('Explore'),
+                      child: const Text(
+                        'Explore',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -102,40 +98,43 @@ class _HomeState extends State<Home> {
                         ));
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amberAccent[700],
+                        backgroundColor: Colors.black,
                       ),
-                      child: const Text('My Avatars'),
+                      child: const Text(
+                        'My Avatars',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          Positioned(
-            top: 50.0,
-            right: 20.0,
-            child: IconButton(
-              onPressed: () async {
-                // Get current user
-                User? user = _auth.getCurrentUser();
+          // Positioned(
+          //   top: 50.0,
+          //   right: 20.0,
+          //   child: IconButton(
+          //     onPressed: () async {
+          //       // Get current user
+          //       User? user = _auth.getCurrentUser();
 
-                if (user != null) {
-                  // Navigate to user profile page with user's UID as parameter
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => UserProfile(user: user),
-                  ));
-                } else {
-                  // Handle case where user is not logged in
-                  // You can show a message or redirect to login page
-                }
-              },
-              icon: const Icon(
-                Icons.person,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-          ),
+          //       if (user != null) {
+          //         // Navigate to user profile page with user's UID as parameter
+          //         Navigator.of(context).push(MaterialPageRoute(
+          //           builder: (context) => UserProfile(user: user),
+          //         ));
+          //       } else {
+          //         // Handle case where user is not logged in
+          //         // You can show a message or redirect to login page
+          //       }
+          //     },
+          //     icon: const Icon(
+          //       Icons.person,
+          //       color: Colors.black,
+          //       size: 35,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

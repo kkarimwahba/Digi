@@ -1,4 +1,6 @@
+import 'package:digi2/components/taskbar.dart';
 import 'package:digi2/screens/avatar.dart';
+import 'package:digi2/screens/home.dart';
 import 'package:flutter/material.dart';
 
 class CongratulationsPage extends StatelessWidget {
@@ -7,10 +9,10 @@ class CongratulationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 24, 30, 62),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 24, 30, 62),
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         title: const Text('Congratulations'),
       ),
       body: Center(
@@ -32,7 +34,7 @@ class CongratulationsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 20), // Add some space
@@ -40,7 +42,7 @@ class CongratulationsPage extends StatelessWidget {
               'You have successfully completed the task.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 40), // Add some space
@@ -66,7 +68,7 @@ class CongratulationsPage extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
-                      'Avatar',
+                      'My Avatar',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 25.0,
@@ -80,7 +82,7 @@ class CongratulationsPage extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (c) {
-                    return const Avatar();
+                    return const TaskBar();
                   },
                 ));
               },
@@ -97,7 +99,7 @@ class CongratulationsPage extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
-                      'Continue',
+                      'Back To Home',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 25.0,
