@@ -51,23 +51,26 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (c) {
-                        return const Gender();
-                      },
-                    ));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
+                SizedBox(
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (c) {
+                          return const Gender();
+                        },
+                      ));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    'Create your Own Avatar',
-                    style: TextStyle(fontSize: 24, color: Colors.white),
+                    child: const Text(
+                      'Create your Own Avatar',
+                      style: TextStyle(fontSize: 24, color: Colors.white),
+                    ),
                   ),
                 ),
                 Row(
