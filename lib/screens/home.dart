@@ -4,6 +4,7 @@ import 'package:digi2/screens/gender.dart';
 import 'package:digi2/screens/login.dart';
 import 'package:digi2/screens/myAvatars.dart';
 import 'package:digi2/screens/profile.dart';
+import 'package:digi2/screens/speechScreen.dart';
 import 'package:digi2/services/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +81,7 @@ class _HomeState extends State<Home> {
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (c) {
-                            return const AudioRecord();
+                            return const SpeechScreen();
                           },
                         ));
                       },
