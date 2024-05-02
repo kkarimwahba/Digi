@@ -88,7 +88,7 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (c) {
-                        return const AudioRecord();
+                        return VoiceRecorderScreen();
                       },
                     ));
                   },
