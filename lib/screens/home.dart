@@ -81,7 +81,7 @@ class _HomeState extends State<Home> {
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (c) {
-                            return const SpeechScreen();
+                            return VoiceRecorderScreen();
                           },
                         ));
                       },
