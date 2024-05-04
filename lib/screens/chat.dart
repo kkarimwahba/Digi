@@ -215,7 +215,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<String> sendMessageToBackend(String message) async {
-    final Uri uri = Uri.parse('http://10.0.2.2:5000/jarvis');
+    final Uri uri = Uri.parse('http://192.168.1.11:5000/jarvis');
     final Map<String, dynamic> requestData = {'input_text': message};
 
     try {
