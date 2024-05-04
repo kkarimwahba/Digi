@@ -129,6 +129,9 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
                 ),
               ],
             ),
+            SizedBox(
+              height: 15,
+            ),
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -161,6 +164,9 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
                   fontWeight: FontWeight.bold,
                   color: Colors.black),
             ),
+            Wrap(children: <Widget>[
+              Chip(label: Text('Speak clearly')),
+            ]),
             // Rest of the code remains the same
             if (_filePath != null)
               Column(
