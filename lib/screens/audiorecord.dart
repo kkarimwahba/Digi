@@ -154,18 +154,19 @@ class _VoiceRecorderScreenState extends State<VoiceRecorderScreen> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Recorder not initialized')));
       return;
+    } else {
+      final dir = await getApplicationDocumentsDirectory();
+      final folderPath = '${dir.path}/audios';
+      final directory = Directory(folderPath);
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+      _filePath = '$folderPath/${DateTime.now().millisecondsSinceEpoch}.wav';
+      await _recorder!.startRecorder(toFile: _filePath);
+      setState(() {
+        _isRecording = true;
+      });
     }
-    final dir = await getApplicationDocumentsDirectory();
-    final folderPath = '${dir.path}/audios';
-    final directory = Directory(folderPath);
-    if (!await directory.exists()) {
-      await directory.create(recursive: true);
-    }
-    _filePath = '$folderPath/${DateTime.now().millisecondsSinceEpoch}.wav';
-    await _recorder!.startRecorder(toFile: _filePath);
-    setState(() {
-      _isRecording = true;
-    });
   }
 
   Future<void> _stopRecording() async {

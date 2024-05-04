@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:digi2/screens/audiorecord.dart';
 import 'package:digi2/screens/congrats.dart';
+import 'package:digi2/screens/questions/questions.dart';
 import 'package:digi2/services/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +46,6 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
         String downloadURL = await taskSnapshot.ref.getDownloadURL();
 
         // Update user gender and images
-        await _auth.updateUserGenderAndImages(
-            widget.selectedGender, widget.uploadedImages, file);
 
         setState(() {
           _filePath = result.files.single.path!;
@@ -129,6 +128,30 @@ class _RecordVoicePageState extends State<RecordVoicePage> {
                   ),
                 ),
               ],
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (c) {
+                    return QuestionScreen();
+                  },
+                ));
+              },
+              icon: const Icon(
+                Icons.upload_file,
+                color: Colors.white,
+              ), // Add upload file icon
+              label: const Text(
+                'Answer some questions!',
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(150.0, 50.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                backgroundColor: Colors.black,
+              ),
             ),
             const SizedBox(height: 20.0),
             const Text(

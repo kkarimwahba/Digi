@@ -30,11 +30,11 @@ class _TaskBarState extends State<TaskBar> {
   }
 
   final List<Widget> _pages = [
-    Home(),
+    const Home(),
     UserProfile(
       user: user,
     ),
-    ChatPage()
+    const ChatPage()
   ];
 
   @override
@@ -48,7 +48,7 @@ class _TaskBarState extends State<TaskBar> {
             _currentIndex = index;
           });
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(
               icon: Icon(
                 Icons.home,
@@ -64,10 +64,17 @@ class _TaskBarState extends State<TaskBar> {
               label: 'Profile',
               backgroundColor: Colors.black),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat', // Add the ChatPage to the bottom navigation bar
+            icon: Icon(
+              Icons.chat,
+              color: Colors.black,
+            ),
+
+            label: 'Chat',
+            // Add the ChatPage to the bottom navigation bar
           ),
         ],
+        selectedItemColor: Color.fromARGB(255, 17, 2, 100),
+        selectedLabelStyle: TextStyle(color: Color.fromARGB(255, 17, 2, 100)),
       ),
     );
   }

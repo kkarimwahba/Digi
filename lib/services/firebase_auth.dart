@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class AuthService {
   final _auth = FirebaseAuth.instance;
@@ -230,8 +231,8 @@ class AuthService {
   //   }
   // }
 
-  Future<void> updateUserGenderAndImages(
-      String gender, List<String> uploadedImages, File file) async {
+  Future<void> updateUserGenderAndImages(String gender,
+      List<String> uploadedImages, File file, List<File> audioFile) async {
     try {
       // Get the current user
       User? user = FirebaseAuth.instance.currentUser;
@@ -267,6 +268,7 @@ class AuthService {
           'gender': gender,
           'images': FieldValue.arrayUnion(uploadedImages),
           'fileURL': fileURL,
+          'audioRecord': audioFile
         });
       }
     } catch (error) {
@@ -274,6 +276,58 @@ class AuthService {
       print('Error updating user gender and images: $error');
       throw Exception(
           'An error occurred while updating user gender and images');
+    }
+  }
+
+  Future<void> updateUserVoiceAudios(List<String> audioFilePaths) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String uid = user.uid;
+
+        // Reference to the 'voiceAudios' collection for the current user
+        CollectionReference voiceAudiosCollection = FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('voiceAudios');
+
+        // Create a list to store the download URLs of all the audio files
+        List<String> audioURLs = [];
+
+        // Loop through each audio file path
+        for (String filePath in audioFilePaths) {
+          // Create a File object from the file path
+          File audioFile = File(filePath);
+
+          // Upload the file to Firebase Storage
+          String fileName =
+              'audio_${DateTime.now().millisecondsSinceEpoch}.wav';
+          Reference storageReference =
+              FirebaseStorage.instance.ref().child('voiceAudios/$fileName');
+          UploadTask uploadTask = storageReference.putFile(audioFile);
+          TaskSnapshot storageTaskSnapshot =
+              await uploadTask.whenComplete(() {});
+
+          // Get the download URL of the uploaded file
+          String fileURL = await storageTaskSnapshot.ref.getDownloadURL();
+
+          // Add the file URL to the list
+          audioURLs.add(fileURL);
+        }
+
+        // Create a map containing the list of audio URLs
+        Map<String, dynamic> audioData = {'audioURLs': audioURLs};
+
+        // Add the map to Firestore as a single document
+
+        await voiceAudiosCollection.doc('allAudios').set(audioData);
+
+        // Clear the list after uploading
+        audioFilePaths.clear();
+      }
+    } catch (error) {
+      print('Error updating user voice audios: $error');
+      throw Exception('An error occurred while updating user voice audios');
     }
   }
 
