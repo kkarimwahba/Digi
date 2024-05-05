@@ -1,4 +1,5 @@
 import 'package:digi2/models/user.dart';
+import 'package:digi2/screens/avatar.dart';
 import 'package:digi2/screens/chat.dart';
 import 'package:digi2/screens/home.dart';
 import 'package:digi2/screens/profile.dart';
@@ -31,10 +32,11 @@ class _TaskBarState extends State<TaskBar> {
 
   final List<Widget> _pages = [
     const Home(),
+    const ChatPage(),
+    const Avatar(),
     UserProfile(
       user: user,
     ),
-    const ChatPage()
   ];
 
   @override
@@ -50,19 +52,12 @@ class _TaskBarState extends State<TaskBar> {
         },
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
-                color: Colors.black,
-              ),
-              label: 'Home',
-              backgroundColor: Colors.black),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.person,
-                color: Colors.black,
-              ),
-              label: 'Profile',
-              backgroundColor: Colors.black),
+            icon: Icon(
+              Icons.home,
+              color: Colors.black,
+            ),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.chat,
@@ -71,6 +66,22 @@ class _TaskBarState extends State<TaskBar> {
 
             label: 'Chat',
             // Add the ChatPage to the bottom navigation bar
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person_pin,
+              color: Colors.black,
+            ),
+
+            label: 'Avatar',
+            // Add the ChatPage to the bottom navigation bar
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.settings,
+              color: Colors.black,
+            ),
+            label: 'Profile',
           ),
         ],
         selectedItemColor: Color.fromARGB(255, 17, 2, 100),
