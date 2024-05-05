@@ -1,5 +1,5 @@
+import 'package:digi2/screens/onboarding/onboarding_screen.dart';
 import 'package:digi2/screens/signup.dart';
-import 'package:digi2/screens/starterScreen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -51,6 +51,6 @@ class _PermissionHandlerWidgetState extends State<PermissionHandlerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return OnboardScreen(); // or any other widget as your home screen
+    return OnboardingScreen(); // or any other widget as your home screen
   }
 }
