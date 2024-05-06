@@ -187,7 +187,7 @@ class _VoiceRecorderScreenState extends State<VoiceRecorderScreen> {
   }
 
   Future<void> _sendAudioToServer(String filePath) async {
-    var uri = Uri.parse('http://10.0.2.2:5000/upload');
+    var uri = Uri.parse('http://10.0.2.2:5000/clone');
     var request = http.MultipartRequest('POST', uri)
       ..files.add(await http.MultipartFile.fromPath('audio', filePath));
 
