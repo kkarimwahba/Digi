@@ -1,75 +1,237 @@
+import 'dart:convert';
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-// import 'package:o3d/o3d.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class Avatar extends StatefulWidget {
-  const Avatar({super.key});
+  const Avatar({Key? key}) : super(key: key);
 
   @override
-  State<Avatar> createState() => _AvatarState();
+  _AvatarState createState() => _AvatarState();
 }
 
 class _AvatarState extends State<Avatar> {
+  final TextEditingController _messageController = TextEditingController();
+  List<Map<String, dynamic>> _messages = [];
+  DateTime? _conversationStartTime;
+  final SpeechToText _speechToText = SpeechToText();
+  bool _isListening = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _speechToText.initialize();
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(onResult: (result) {
+      setState(() {
+        _messageController.text = result.recognizedWords;
+      });
+    });
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  void _stopListening() {
+    _speechToText.stop();
+    setState(() {
+      _isListening = false;
+    });
+    _sendMessage(_messageController.text);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Container(
+    return Scaffold(
+      body: Stack(
+        children: [
+          _buildAvatar(),
+          _buildChatWidget(),
+          _buildMicButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar() {
+    return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/3Env1.png'),
           fit: BoxFit.cover,
         ),
       ),
-      child: Stack(
-        children: [
-          Transform(
-            transform: Matrix4.translationValues(1.0, 0.0, 14.0),
-            child: const ModelViewer(
-                src: 'assets/avatars/model.glb',
-                cameraControls: true,
-                autoPlay: true,
-                animationName: 'Running',
-                cameraOrbit: '0deg 80deg 0m'),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
+      child: Transform(
+        transform: Matrix4.translationValues(1.0, 0.0, 14.0),
+        child: const ModelViewer(
+          src: 'assets/avatars/model.glb',
+          cameraControls: true,
+          autoPlay: true,
+          animationName: 'Running',
+          cameraOrbit: '0deg 80deg 0m',
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChatWidget() {
+    return Positioned(
+      left: 20,
+      right: 20,
+      bottom: 65,
+      child: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: _messages.asMap().entries.map((entry) {
+            final index = entry.key;
+            final messageData = entry.value;
+            final String message = messageData['message'];
+            final bool isMe = messageData['isMe'];
+            final DateTime timeSent = messageData['timeSent'];
+
+            return Align(
+              alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
               child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color.fromARGB(255, 203, 169, 36),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 4.0,
+                ),
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: isMe ? Colors.black : Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      message,
+                      style: isMe
+                          ? TextStyle(fontSize: 16.0, color: Colors.white)
+                          : TextStyle(fontSize: 16.0, color: Colors.black),
+                    ),
+                    const SizedBox(height: 4.0),
+                    Text(
+                      '${timeSent.hour}:${timeSent.minute}',
+                      style: isMe
+                          ? TextStyle(fontSize: 12.0, color: Colors.white)
+                          : TextStyle(fontSize: 12.0, color: Colors.black),
                     ),
                   ],
                 ),
-                child: Material(
-                  shape: const CircleBorder(),
-                  color: const Color.fromARGB(255, 203, 169, 36),
-                  child: InkWell(
-                    onTap: () {
-                      // Handle microphone button press
-                    },
-                    borderRadius: BorderRadius.circular(28),
-                    child: const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Icon(
-                        Icons.mic,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMicButton() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: AvatarGlow(
+          glowColor: Colors.greenAccent,
+          repeat: true,
+          animate: _isListening,
+          child: GestureDetector(
+            onTapDown: (details) async {
+              if (!_isListening) {
+                var available = await _speechToText.initialize();
+                if (available) {
+                  setState(() {
+                    _isListening = true;
+                  });
+                  _startListening();
+                }
+              }
+            },
+            onTapUp: (details) => _stopListening(),
+            child: CircleAvatar(
+              backgroundColor: Colors.black,
+              radius: 35,
+              child: Icon(
+                _isListening ? Icons.mic : Icons.mic_none,
+                color: Colors.white,
               ),
             ),
           ),
-        ],
+        ),
       ),
-    ));
+    );
+  }
+
+  Future<void> _sendMessage(String message) async {
+    if (message.isNotEmpty) {
+      final DateTime currentTime = DateTime.now();
+      setState(() {
+        if (_conversationStartTime == null) {
+          _conversationStartTime = currentTime;
+        }
+        _messages.add({
+          'message': message,
+          'isMe': true,
+          'timeSent': currentTime,
+        });
+        // Add typing indicator
+        _messages.add({
+          'message': '...',
+          'isMe': false,
+          'timeSent': currentTime,
+          'typing': true, // A new property to identify typing indicators
+        });
+        _messageController.clear();
+      });
+
+      // Simulate network delay or wait for response
+      String response = await sendMessageToBackend(message);
+
+      // Remove typing indicator before adding the response
+      setState(() {
+        // Remove the last message which is the typing indicator
+        if (_messages.isNotEmpty && _messages.last['typing'] == true) {
+          _messages.removeLast();
+        }
+        _messages.add({
+          'message': response,
+          'isMe': false,
+          'timeSent': DateTime.now(),
+        });
+      });
+    }
+  }
+
+  Future<String> sendMessageToBackend(String message) async {
+    final Uri uri = Uri.parse('http://10.0.2.2:5000/jarvis');
+    final Map<String, dynamic> requestData = {'input_text': message};
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestData),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        final String aiResponse = responseData['response'];
+        return aiResponse;
+      } else {
+        return 'Failed to get response from server';
+      }
+    } catch (e) {
+      return 'Error: $e';
+    }
   }
 }
