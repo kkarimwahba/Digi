@@ -6,6 +6,7 @@ import 'package:digi2/screens/myAvatars.dart';
 import 'package:digi2/screens/profile.dart';
 import 'package:digi2/screens/speechScreen.dart';
 import 'package:digi2/services/firebase_auth.dart';
+import 'package:digi2/webView/avatarWeb.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -95,11 +96,11 @@ class _HomeState extends State<Home> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (c) {
-                            return MyAvatarsPage();
-                          },
-                        ));
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //   builder: (c) {
+                        //     return ();
+                        //   },
+                        // ));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
