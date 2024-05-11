@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:digi2/services/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 
 class uploadImage extends StatefulWidget {
   final String selectedGender;
@@ -21,7 +22,7 @@ class _uploadImageState extends State<uploadImage> {
   List<String> uploadedImages = [];
   final ImagePicker _picker = ImagePicker();
   final _auth = AuthService();
-
+  File? UploadOneImage;
   Future<void> _takePhoto() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
@@ -31,12 +32,42 @@ class _uploadImageState extends State<uploadImage> {
     }
   }
 
+  // Future<void> _chooseFromGallery() async {
+  //   final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       uploadedImages.add(pickedFile.path);
+  //       UploadOneImage = File(pickedFile.path);
+  //     });
+  //   }
+  // }
   Future<void> _chooseFromGallery() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         uploadedImages.add(pickedFile.path);
+        UploadOneImage =
+            File(pickedFile.path); // Save the selected image as a File
       });
+    }
+  }
+
+  Future<void> _uploadImages() async {
+    if (UploadOneImage != null) {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5002/upload_image'),
+        body: {
+          'image': await http.MultipartFile.fromPath(
+              'image', UploadOneImage!.path), // Use the path of the File object
+        },
+      );
+      if (response.statusCode == 200) {
+        print('Image uploaded successfully');
+      } else {
+        print('Failed to upload image');
+      }
+    } else {
+      print('No image selected');
     }
   }
 
@@ -108,6 +139,24 @@ class _uploadImageState extends State<uploadImage> {
                   ),
                 ),
               ],
+            ),
+            ElevatedButton.icon(
+              onPressed: _uploadImages,
+              icon: const Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+              ),
+              label: const Text(
+                'Upload Image one',
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(150.0, 50.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                backgroundColor: Colors.black,
+              ),
             ),
             const SizedBox(height: 20.0),
             const Text(
