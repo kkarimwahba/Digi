@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart';
@@ -11,6 +12,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final AudioPlayer audioPlayer = AudioPlayer();
   final TextEditingController _messageController = TextEditingController();
   List<Map<String, dynamic>> _messages = [];
   DateTime? _conversationStartTime;
@@ -215,7 +217,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<String> sendMessageToBackend(String message) async {
-    final Uri uri = Uri.parse('http://192.168.137.88:5000/jarvis');
+    final Uri uri = Uri.parse('http://192.168.1.10:5000/jarvis');
     final Map<String, dynamic> requestData = {'input_text': message};
 
     try {
@@ -228,6 +230,16 @@ class _ChatPageState extends State<ChatPage> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         final String aiResponse = responseData['response'];
+        final String audioUrl = responseData[
+            'audio_url']; // Ensure this key matches what's sent by the server
+
+        // Play the audio using AudioSource.uri
+        if (audioUrl != null && audioUrl.isNotEmpty) {
+          await audioPlayer.setSource(UrlSource(audioUrl));
+          await audioPlayer
+              .resume(); // This assumes that play is desired immediately after setting the source
+        }
+
         return aiResponse;
       } else {
         return 'Failed to get response from server';

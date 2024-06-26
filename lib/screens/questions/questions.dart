@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:digi2/components/bar.dart';
 import 'package:digi2/components/button.dart';
 import 'package:digi2/screens/congrats.dart';
@@ -18,12 +19,8 @@ class QuestionScreen extends StatefulWidget {
 }
 
 class _QuestionScreenState extends State<QuestionScreen> {
-  FlutterSoundRecorder? _recorder;
-  final _auth = AuthService();
-  bool _isRecording = false;
-  bool _isRecorderInitialized = false;
-  String? _filePath;
-  List<String> audioFiles = [];
+  TextEditingController _textFieldController = TextEditingController();
+  List<Map<String, String>> userResponses = [];
   int currentQuestionIndex = 0;
   List<String> questions = [
     "What is your name?",
@@ -33,86 +30,69 @@ class _QuestionScreenState extends State<QuestionScreen> {
     "Tell me about your favorite book."
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _recorder = FlutterSoundRecorder();
-    _initRecorder();
-  }
-
-  Future<void> _initRecorder() async {
-    final status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Microphone permission not granted')));
-      return;
-    }
-    await _recorder!.openRecorder();
-    setState(() {
-      _isRecorderInitialized = true;
-    });
-  }
-
-  Future<void> _startRecording() async {
-    if (!_isRecorderInitialized) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Recorder not initialized')));
-      return;
-    } else {
-      final dir = await getApplicationDocumentsDirectory();
-      final folderPath = '${dir.path}/audios';
-      final directory = Directory(folderPath);
-      if (!await directory.exists()) {
-        await directory.create(recursive: true);
-      }
-      _filePath = '$folderPath/${DateTime.now().millisecondsSinceEpoch}.wav';
-      await _recorder!.startRecorder(toFile: _filePath);
-      setState(() {
-        _isRecording = true;
-      });
-    }
-  }
-
-  Future<void> _stopRecording() async {
-    await _recorder!.stopRecorder();
-    setState(() {
-      _isRecording = false;
-    });
-    if (_filePath != null) {
-      final recordedFile = File(_filePath!);
-      if (recordedFile.existsSync()) {
-        audioFiles.add(_filePath!); // Add the file path to the list
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Recording saved: $_filePath')));
-        if (currentQuestionIndex == questions.length - 1) {
-          // If this is the last question, upload the audio files to Firebase
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Recording failed to save')));
-      }
-    }
-  }
-
   void moveToNextQuestion() {
-    if (currentQuestionIndex < questions.length - 1) {
-      setState(() {
-        currentQuestionIndex++;
-      });
+    if (_textFieldController.text.isNotEmpty) {
+      // Build the response object
+      Map<String, String> response = {
+        'role': 'system',
+        'content': _textFieldController.text,
+      };
+      // Add the response to the list
+      userResponses.add(response);
+
+      // Clear the text field for the next question
+      _textFieldController.clear();
+
+      // Check if all questions are answered
+      if (currentQuestionIndex < questions.length - 1) {
+        // Move to the next question
+        setState(() {
+          currentQuestionIndex++;
+        });
+      } else {
+        // All questions are answered, send responses to server
+        sendUserResponsesToServer(userResponses);
+      }
     } else {
-      _auth.updateUserVoiceAudios(audioFiles);
+      // Show an error message or prompt the user to enter a response
+    }
+  }
+
+  void sendUserResponsesToServer(
+      List<Map<String, String>> userResponses) async {
+    if (userResponses.isNotEmpty) {
+      final url = 'http://10.0.2.2:5000/save_responses';
+      final headers = {'Content-Type': 'application/json'};
+      final body = jsonEncode({'responses': userResponses});
       Navigator.of(context).push(MaterialPageRoute(
         builder: (c) {
-          return CongratulationsPage();
+          return const CongratulationsPage();
         },
       ));
+      try {
+        final response =
+            await http.post(Uri.parse(url), headers: headers, body: body);
+        if (response.statusCode == 200) {
+          print('User responses sent to server successfully.');
+        } else {
+          print(
+              'Failed to send user responses. Status code: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error sending user responses: $e');
+      }
+    } else {
+      // Show a Snackbar if the list is empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No responses to send.')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Voice Recorder")),
+      appBar: AppBar(title: const Text("Answer Questions")),
       body: Column(
         children: <Widget>[
           SizedBox(
@@ -121,66 +101,22 @@ class _QuestionScreenState extends State<QuestionScreen> {
           buildSegmentedProgressBar(
               questions: questions, currentQuestionIndex: currentQuestionIndex),
           const SizedBox(height: 25),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              questions[currentQuestionIndex],
-              style: const TextStyle(fontSize: 35),
-              textAlign: TextAlign.center,
-            ),
+          Text(
+            questions[currentQuestionIndex],
+            style: const TextStyle(fontSize: 35),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(
-            height: 25,
-          ),
+          const SizedBox(height: 25),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
-            child: ElevatedButton(
-              onPressed: _isRecording || !_isRecorderInitialized
-                  ? null
-                  : _startRecording,
-              child: const Icon(
-                Icons.mic,
-                color: Colors.black,
-                size: 30,
-              ),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(
-                    50.0, 50.0), // Set a fixed size for the circular button
-                backgroundColor: Colors.amberAccent[700],
-                shape:
-                    const CircleBorder(), // Set the button's shape to CircleBorder
-                padding: const EdgeInsets.all(15), // Adjust padding as needed
-                shadowColor: Colors.transparent,
+            child: TextField(
+              controller: _textFieldController,
+              decoration: InputDecoration(
+                hintText: 'Type your response here',
               ),
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: ElevatedButton(
-              onPressed: !_isRecording ? null : _stopRecording,
-              child: const Icon(
-                Icons.stop,
-                color: Colors.white,
-                size: 30,
-              ),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(
-                    50.0, 50.0), // Set a fixed size for the circular button
-                backgroundColor: Colors.red,
-                shape:
-                    const CircleBorder(), // Set the button's shape to CircleBorder
-                padding: const EdgeInsets.all(15), // Adjust padding as needed
-                shadowColor: Colors.transparent,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 25,
-          ),
-          //if (_filePath != null) Text('Last file: $_filePath'),
+          const SizedBox(height: 25),
           CustomButton(
             text: 'Next',
             onPressed: () {
@@ -190,11 +126,5 @@ class _QuestionScreenState extends State<QuestionScreen> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _recorder?.closeRecorder();
-    super.dispose();
   }
 }

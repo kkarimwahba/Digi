@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +14,7 @@ class Avatar extends StatefulWidget {
 }
 
 class _AvatarState extends State<Avatar> {
+  final AudioPlayer audioPlayer = AudioPlayer();
   final TextEditingController _messageController = TextEditingController();
   List<Map<String, dynamic>> _messages = [];
   DateTime? _conversationStartTime;
@@ -144,6 +146,7 @@ class _AvatarState extends State<Avatar> {
         child: AvatarGlow(
           glowColor: Colors.greenAccent,
           repeat: true,
+          duration: Duration(milliseconds: 2000),
           animate: _isListening,
           child: GestureDetector(
             onTapDown: (details) async {
@@ -172,6 +175,45 @@ class _AvatarState extends State<Avatar> {
     );
   }
 
+  // Future<void> _sendMessage(String message) async {
+  //   if (message.isNotEmpty) {
+  //     final DateTime currentTime = DateTime.now();
+  //     setState(() {
+  //       if (_conversationStartTime == null) {
+  //         _conversationStartTime = currentTime;
+  //       }
+  //       _messages.add({
+  //         'message': message,
+  //         'isMe': true,
+  //         'timeSent': currentTime,
+  //       });
+  //       // Add typing indicator
+  //       _messages.add({
+  //         'message': '...',
+  //         'isMe': false,
+  //         'timeSent': currentTime,
+  //         'typing': true, // A new property to identify typing indicators
+  //       });
+  //       _messageController.clear();
+  //     });
+
+  //     // Simulate network delay or wait for response
+  //     String response = await sendMessageToBackend(message);
+
+  //     // Remove typing indicator before adding the response
+  //     setState(() {
+  //       // Remove the last message which is the typing indicator
+  //       if (_messages.isNotEmpty && _messages.last['typing'] == true) {
+  //         _messages.removeLast();
+  //       }
+  //       _messages.add({
+  //         'message': response,
+  //         'isMe': false,
+  //         'timeSent': DateTime.now(),
+  //       });
+  //     });
+  //   }
+  // }
   Future<void> _sendMessage(String message) async {
     if (message.isNotEmpty) {
       final DateTime currentTime = DateTime.now();
@@ -194,8 +236,15 @@ class _AvatarState extends State<Avatar> {
         _messageController.clear();
       });
 
-      // Simulate network delay or wait for response
-      String response = await sendMessageToBackend(message);
+      String response = '';
+
+      // Handle static responses based on input message
+      if (message.toLowerCase() == 'hello') {
+        response = 'Hello! How can I assist you today?';
+      } else {
+        // Simulate network delay or wait for response
+        response = await sendMessageToBackend(message);
+      }
 
       // Remove typing indicator before adding the response
       setState(() {
@@ -226,6 +275,16 @@ class _AvatarState extends State<Avatar> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         final String aiResponse = responseData['response'];
+        final String audioUrl = responseData[
+            'audio_url']; // Ensure this key matches what's sent by the server
+
+        // Play the audio using AudioSource.uri
+        if (audioUrl != null && audioUrl.isNotEmpty) {
+          await audioPlayer.setSource(UrlSource(audioUrl));
+          await audioPlayer
+              .resume(); // This assumes that play is desired immediately after setting the source
+        }
+
         return aiResponse;
       } else {
         return 'Failed to get response from server';
