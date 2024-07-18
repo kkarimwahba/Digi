@@ -1,4 +1,4 @@
-# digi2
+# DIGI - Digital Twin of human creation.
 
 A new Flutter project.
 
